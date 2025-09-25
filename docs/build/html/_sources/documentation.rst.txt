@@ -65,6 +65,8 @@ Grobnercrystals provides functions for defining several ideals of interest.
 
 .. autofunction:: grobnercrystals.msv()
 
+.. autofunction:: grobnercrystals.eff_msv()
+
 .. autofunction:: grobnercrystals.mrv()
 
 The following function is useful for defining various 
