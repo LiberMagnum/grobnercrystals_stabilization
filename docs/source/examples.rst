@@ -1,7 +1,7 @@
 Examples
 ========
 
-This section contains computations for various examples from the paper. To follow along, first run the following (in a Sage shell):
+This section contains computations for various examples from `this preprint <https://arxiv.org/abs/2510.07560>`__. To follow along, first run the following (in a Sage shell):
 
 >>> import grobnercrystals as gcs
 

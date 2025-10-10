@@ -6,7 +6,7 @@
 grobnercrystals documentation
 =============================
 
-**grobnercrystals** is a `SageMath <https://doc.sagemath.org/html/en/index.html>`__ package for working with *Gröbner crystal structures*.
+**grobnercrystals** is a `SageMath <https://doc.sagemath.org/html/en/index.html>`__ package for working with *Gröbner crystal structures* (introduced in `this preprint <https://arxiv.org/abs/2510.07560>`__).
 
 Check out the :doc:`usage` section for further information.
 

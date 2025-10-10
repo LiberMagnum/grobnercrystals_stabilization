@@ -1,6 +1,6 @@
 # Summary
 
-This repository contains SageMath code for working with *Gröbner crystal structures*.
+This repository contains SageMath code for working with *Gröbner crystal structures*, introduced in [this preprint](https://arxiv.org/abs/2510.07560).
 
 ## Dependencies
 
