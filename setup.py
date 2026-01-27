@@ -3,7 +3,7 @@ from setuptools import setup # type: ignore
 
 setup(
     name='grobnercrystals',
-    version='1.1.2',
+    version='1.1.3',
     description='A SageMath package for working with Gröbner crystal structures',
 
     url='https://github.com/LiberMagnum/grobnercrystals',
