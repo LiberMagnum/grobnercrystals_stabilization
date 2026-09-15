@@ -1,6 +1,6 @@
 # Summary
 
-This repository contains SageMath code for working with *Gröbner crystal structures*, introduced in [this preprint](https://arxiv.org/abs/2510.07560).
+This repository contains SageMath code for working with *Gröbner crystal structures*, introduced in [this preprint](https://arxiv.org/abs/2510.07560). This code contains some additional functions for working with equivariant Betti tables and (skew-)symmetric MSVs.
 
 ## Dependencies
 
