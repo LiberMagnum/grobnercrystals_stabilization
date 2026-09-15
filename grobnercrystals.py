@@ -6,6 +6,7 @@ import numpy as np # type: ignore
 import itertools as it
 import copy
 from collections import defaultdict
+import functools
 
 # useful shorthands for Sage functions
 import sage.interfaces.macaulay2 as m2 # type: ignore
@@ -942,7 +943,8 @@ class SplitPoly():
             return retStr
 
 class PolRing():
-    """Class for polynomial rings in an m by n matrix of variables.
+    """Class for polynomial rings in an m by n matrix of variables. 
+    NOTE: if m or n is larger than 9, everything will break!
 
     :param m: number of rows in the matrix of variables
     :type m: int
@@ -952,6 +954,8 @@ class PolRing():
     :type name: str
     :param to: Macaulay2 ring term order, optional, default 'GRevLex'
     :type to: str
+    :param omit_vars: list [(i,j)] of variables zij to omit from the ring
+    :type omit_vars: list, optional
 
     :ivar R: Sage PolynomialRing in an m by n matrix of variables
     :ivar Z: matrix of variables
@@ -964,18 +968,24 @@ class PolRing():
     """
 
     # returns a polynomial ring in mxn variables
-    def __init__(self,m,n,name='z',to='GRevLex'):
+    def __init__(self,m,n,name='z',to='GRevLex',omit_vars=[]):
         self.m = m
         self.n = n
         self.vars = var_gen(self.m,self.n,name)
         self.varsM2 = var_gen(self.m,self.n,'m')
-        self.R = PolynomialRing(QQ,names=self.vars)
 
-        self.Z = matrix(self.R,np.array(self.vars).reshape(m,n)) 
-        
-        self.xR = PolynomialRing(QQ,names=['x'+str(i) for i in range(1,self.m+1)]) 
-        self.yR = PolynomialRing(QQ,names=['y'+str(i) for i in range(1,self.n+1)]) 
-        self.xyR = PolynomialRing(QQ,names=['x'+str(i) for i in range(1,self.m+1)]+['y'+str(i) for i in range(1,self.n+1)])
+        self.vars = [elt for elt in self.vars if not (int(elt[1]),int(elt[2])) in omit_vars]
+        self.R = PolynomialRing(QQ,len(self.vars),names=self.vars)
+
+        self.Z = matrix(self.R,m,n) 
+        for i in range(self.m):
+            for j in range(self.n):
+                if (i+1,j+1) not in omit_vars:
+                    self.Z[i,j] = self.R('z'+str(i+1)+str(j+1))
+
+        self.xR = PolynomialRing(QQ,self.m,names=['x'+str(i) for i in range(1,self.m+1)]) 
+        self.yR = PolynomialRing(QQ,self.n,names=['y'+str(i) for i in range(1,self.n+1)]) 
+        self.xyR = PolynomialRing(QQ,self.m+self.n,names=['x'+str(i) for i in range(1,self.m+1)]+['y'+str(i) for i in range(1,self.n+1)])
 
         self.X = self.xR.gens()
         self.Y = self.yR.gens()
@@ -1348,12 +1358,12 @@ class BIdeal():
     # Input: degree of the expansion
     def hilb_exp(self,deg):
         """Computes the Hilbert series expansion of I up to a given degree.
-        The Hilbert series is output as a SplitPol.
+        The Hilbert series is output as a SplitPoly object.
 
         :param deg: degree
         :type deg: int
         :return: Hilbert series up to a given degree
-        :rtype: SplitPol
+        :rtype: SplitPoly
         """
 
         # Define the ideal in M2
@@ -1364,6 +1374,13 @@ class BIdeal():
         pol = m2.macaulay2(m2_command)
         pol = M2_to_Sage(str(pol),self.XY)
         return SplitPoly(pol,self.PR.xR,self.PR.yR)
+
+    def k_poly(self):
+        """Computes the K-polynomial of R/I, output as a SplitPol object.
+
+        :return: K-polynomial of R/I
+        :rtype: SplitPoly
+        """
 
     def gb(self,to=None):
         """Computes a Grobner basis for the ideal. Optionally, one may specify
@@ -1457,6 +1474,64 @@ class BIdeal():
             m2.macaulay2.set(ring_name,self.PR.ungraded_m2_str)
             m2.macaulay2.set(ideal_name,self.m2_ideal_str)
 
+    @functools.lru_cache
+    def graded_betti(self,maxlen=None):
+        """Find the multigraded Betti table for this ideal. Optionally, find a truncated betti table. 
+
+        :param maxlen: maximum number of terms in the resolution to compute, defaults to 
+        computing the whole resolution
+        :type maxlen: int, optional
+        """
+        # Make sure ideal is defined in M2
+        self.def_m2_vars(graded=True)
+
+        # Truncate the resolution at a particular length, if desired
+        if maxlen is None:
+            m2str = "multigraded betti res I"
+        if maxlen is not None:
+            m2str = "multigraded betti res(I,LengthLimit=>"+str(maxlen)+")"
+
+        m2.macaulay2.set("B",m2str)
+        m2.macaulay2.set("k","keys B")
+        numpairs = int(m2.macaulay2("#k").to_sage())
+
+        d = {}
+        for i in range(numpairs):
+            (row,col) = (int(m2.macaulay2("(k#"+str(i)+")#2").to_sage()),int(m2.macaulay2("(k#"+str(i)+")#0").to_sage()))
+            if (row-col,col) not in d.keys():
+                d[(row-col,col)] = 0
+            
+            exp_tuple = m2.macaulay2("k#"+str(i)+"#1").to_sage()
+            mon = 1
+            for l in range(len(exp_tuple)):
+                mon *= self.PR.XY[l]**exp_tuple[l]
+            
+            coeff = m2.macaulay2("B#(k#"+str(i)+")").to_sage()
+            d[(row-col,col)] += mon*coeff
+
+        return d
+
+    def equivariant_betti(self,I=[],J=[],maxlen=None):
+        """Find the equivariant Betti table for this ideal, assuming it 
+        carries a group action.
+
+        :param I: Levi datum for the row group action
+        :type I: list, optional
+        :param J: Levi datum for the column group action
+        :type J: list, optional
+        :param maxlen: Number of terms in the resolution to compute, defaults
+        to computing the whole resolution
+        :type maxlen: int, optional
+        """
+        B = self.graded_betti(maxlen=maxlen)
+        newB = {}
+
+        for k in B.keys():
+            p = SplitPoly(B[k],self.PR.xR,self.PR.yR).expand(x='s',y='s',I=I,J=J,returnDict=True)
+            newB[k] = p
+
+        return newB
+
 '''
 GROUP ACTIONS
 '''
@@ -1546,28 +1621,6 @@ def minors(M,k,B=None):
             retVal.append(M[row,col].determinant([row,col]))
         
     return retVal
-
-def shape_ideal(l,m,n,R=None):
-    """Outputs the BIdeal I generated by all bitableaux of shape l in
-    the polynomial ring in a matrix of m by n variables.
-
-    :param l: a partition, as a decreasing list of integers
-    :type l: list
-    :param m: number of rows of the matrix of variables
-    :type m: int
-    :param n: number of columns of the matrix of variables
-    :type n: int
-    :param R: PolRing in which to define the ideal, defaults to None
-    :type R: PolRing, optional
-    :return: shape ideal I
-    :rtype: BIdeal
-    """
-
-    if R is None:
-        R = PolRing(m,n)
-    gens = all_nonstd_pol_bitabs(l,R)
-    I = BIdeal(gens,R)
-    return I
 
 # Classical determinantal ideals
 # Input: number of rows, number of columns, size of minor
@@ -1709,76 +1762,6 @@ def mrv(u,v):
     I = BIdeal(gens,R)
     return I
 
-'''
-BITABLEAUX
-'''
-# Given a pair of SSYT, return the bitableau as a list [[[row indices],[column indices]],...]
-def bitableau(P,Q):
-    if not len(P[0])==len(Q[0]):
-        print('Error: P,Q tableaux are not the same shape')
-        return
-    bitab = [[[P[i][j] for i in range(len(P)) if j<len(P[i])],[Q[i][j] for i in range(len(Q)) if j<len(Q[i])]] for j in range(len(P[0]))]
-    return bitab
-
-# Given a pair of SSYT and a ring R (instance of PolRing), return the polynomial corresponding to that bitableau in R
-def poly_bitableau(P,Q,R):
-    bitab = bitableau(P,Q)
-    retVal = 1
-    for [r,c] in bitab:
-        retVal *= R.Z[sorted([r[i]-1 for i in range(len(r))]),sorted([c[i]-1 for i in range(len(c))])].determinant()
-    return retVal
-
-# Given a shape, max entry of P, max entry of Q, generate a list of all standard bitableaux of that shape and those max entries
-def all_bitabs(shape,m,n,left_just=False):
-    P_tab = SemistandardTableaux(shape, max_entry=m) 
-
-    if not left_just:
-        Q_tab = SemistandardTableaux(shape, max_entry=n) 
-    if left_just:
-        Q_tab = [SemistandardTableau([[i+1]*shape[i] for i in range(len(shape))])] 
-
-    tabs = it.product(P_tab,Q_tab)
-    return tabs
-
-def pick_one_from_each_ls(l):
-    if len(l)==1:
-        return l
-    retVal = it.product(*l)
-    return retVal
-
-# Given a shape, max entry of P, max entry of Q, generate a list of all (not necessarily standard) bitableaux of that shape
-# and those max entries
-def all_nonstd_bitabs(shape,m,n):
-    # find conjugate of shape
-    conj = Partition(shape).conjugate() 
-
-    # iterate over each column and get lists of all the SSYT for that column
-    colLsP = [[] for elt in conj]
-    colLsQ = [[] for elt in conj]
-    for i in range(len(conj)):
-        colLsP[i] = SemistandardTableaux([1]*conj[i], max_entry=m).list() 
-        colLsQ[i] = SemistandardTableaux([1]*conj[i], max_entry=n).list() 
-
-    PIt = pick_one_from_each_ls(colLsP)
-    QIt = pick_one_from_each_ls(colLsQ)
-
-    P_tab = [Tableau([[ob[0] for ob in col] for col in elt]).conjugate() for elt in PIt] 
-    Q_tab = [Tableau([[ob[0] for ob in col] for col in elt]).conjugate() for elt in QIt] 
-    tabs = it.product(P_tab,Q_tab)
-    return tabs
-
-# Given a shape and an instance of PolRing, return all standard bitableaux of that shape in that ring
-def all_pol_bitabs(shape,R,left_just=False):
-    bitabs = all_bitabs(shape,R.m,R.n,left_just=left_just)
-    tabs = [poly_bitableau(elt[0],elt[1],R) for elt in bitabs]
-    return tabs
-
-# Given a shape and an instance of PolRing, return all bitableaux (not necessarily standard) of that 
-# shape in that ring
-def all_nonstd_pol_bitabs(shape,R):
-    bitabs = all_nonstd_bitabs(shape,R.m,R.n)
-    tabs = [poly_bitableau(elt[0],elt[1],R) for elt in bitabs]
-    return tabs
 
 '''
 HELPER FUNCTIONS
@@ -1811,3 +1794,7 @@ def is_nonstd(gens,check_mat):
         if np.min(check_mat-gen) >= 0:
             return True
     return False
+
+'''
+FORMATTING AND PRETTY PRINTING FUNCTIONS
+'''
