@@ -11,6 +11,7 @@ import functools
 # useful shorthands for Sage functions
 import sage.interfaces.macaulay2 as m2 # type: ignore
 from sage.combinat.permutation import Permutation # type: ignore
+from sage.combinat.permutation import Permutations # type: ignore
 from sage.combinat.rsk import RSK # type: ignore
 from sage.symbolic.ring import SymbolicRing as SR # type: ignore
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing # type: ignore
@@ -127,10 +128,7 @@ class Perm():
     def levi_datum(self):
         """Finds the Levi datum corresponding to the largest Levi
         group which acts on the effective matrix Schubert variety 
-        corresponding to the permutation. If a region is specified,
-        returns the Levi datum corresponding to the largest Levi
-        group which acts on the matrix Schubert variety when restricted
-        to that region.
+        corresponding to the permutation. 
 
         :return: A Levi datum [I,J], where I,J are lists of integers
         :rtype: list
@@ -144,7 +142,7 @@ class Perm():
         if not descentsWInv[-1]==self.max_col+1:
             descentsWInv += [self.max_col+1]
         return [descentsW,descentsWInv]
-    
+
     # returns lists of (0-indexed) rows and columns that are not separated by descents
     # example: [[[0,1],[2,3,4]],[[0],[1,2,3]]]
     def comparable_rows_cols(self):
@@ -807,9 +805,9 @@ class SplitPoly():
         sortDict = {'s':False,'ss':True,'m':True}
         ringDict = {'s':SymmetricFunctions(QQ).schur(),
                     'm':self.R}
-        rehomeRingDictX = {'s':PolynomialRing(QQ,names=self.x), 
+        rehomeRingDictX = {'s':PolynomialRing(QQ,len(self.x),names=self.x), 
                            'm':self.xR}
-        rehomeRingDictY = {'s':PolynomialRing(QQ,names=self.y), 
+        rehomeRingDictY = {'s':PolynomialRing(QQ,len(self.y),names=self.y), 
                            'm':self.yR}
 
         xIt = iter(self.X)
@@ -1375,12 +1373,20 @@ class BIdeal():
         pol = M2_to_Sage(str(pol),self.XY)
         return SplitPoly(pol,self.PR.xR,self.PR.yR)
 
-    def k_poly(self):
-        """Computes the K-polynomial of R/I, output as a SplitPol object.
+    def k_pol(self):
+        """Computes the K-polynomial of R/I, output as a SplitPoly object.
 
         :return: K-polynomial of R/I
         :rtype: SplitPoly
         """
+        self.def_m2_vars(graded=True)
+
+        m2.macaulay2.set("p","toString numerator hilbertSeries I")
+        p = m2.macaulay2("p").to_sage()
+        p = M2_to_Sage(p,self.PR.XY)
+
+        return SplitPoly(p,self.PR.xR,self.PR.yR)
+
 
     def gb(self,to=None):
         """Computes a Grobner basis for the ideal. Optionally, one may specify
@@ -1474,7 +1480,6 @@ class BIdeal():
             m2.macaulay2.set(ring_name,self.PR.ungraded_m2_str)
             m2.macaulay2.set(ideal_name,self.m2_ideal_str)
 
-    @functools.lru_cache
     def graded_betti(self,maxlen=None):
         """Find the multigraded Betti table for this ideal. Optionally, find a truncated betti table. 
 
@@ -1531,6 +1536,29 @@ class BIdeal():
             newB[k] = p
 
         return newB
+
+    def equivariant_betti_html(self,I=[],J=[],maxlen=None):
+        B = self.equivariant_betti(I=I,J=J,maxlen=maxlen)
+
+        maxrow = max([i for (i,j) in B.keys()])
+        maxcol = max([j for (i,j) in B.keys()])
+
+        retval = '<table><tr><td></td>'
+        for i in range(maxcol+1):
+            retval += '<td>'+str(i)+'</td>'
+        retval += '</tr>'
+
+        for i in range(maxrow+1):
+            retval += '<tr><td>'+str(i)+'</td>'
+            for j in range(maxcol+1):
+                if (i,j) in B.keys():
+                    retval += '<td>'+html_rep(B[(i,j)])+'</td>'
+                else:
+                    retval += '<td>-</td>'
+            retval += '</tr>'
+        
+        retval += '</table>'
+        return retval
 
 '''
 GROUP ACTIONS
@@ -1798,3 +1826,95 @@ def is_nonstd(gens,check_mat):
 '''
 FORMATTING AND PRETTY PRINTING FUNCTIONS
 '''
+def html_partition(nmu):
+    """Takes a partition mu and outputs html code for drawing mu.
+
+    :param nmu: a partition
+    :type nmu: list
+    :return: html code
+    :rtype: str
+    """
+    mu = [elt for elt in nmu if elt!=0]
+
+    retval = '<div class=\"partition\">'
+    cell = '<div class=\"cell\"></div>'
+
+    for row in mu:
+        retval += '<div class=\"row\">'+cell*row+'</div>'
+
+    if mu==[]:
+        retval += '&empty;'
+
+    retval += '</div>'
+    return retval
+
+def html_parls(parlsx,parlsy=None,mult=None):
+    """Takes two lists of partitions and and their multiplicity and
+    outputs html code for drawing the partitions with commas separating 
+    elements of each list and a | separating the two lists.
+
+    :param parlsx: list of partitions
+    :type parlsx: list
+    :param parlsy: list of partitions
+    :type parlsy: list, optional
+    """ 
+    retval = '<div class=\"partitionrow\">'
+
+    if mult is not None:
+        retval += '<div class=\"separator\">'+str(mult)+'&lowast;</div>'
+
+    commasep = '<div class=\"separator\">,</div>'
+    
+    for i in range(len(parlsx)):
+        retval += html_partition(parlsx[i])
+        if i != len(parlsx)-1:
+            retval += commasep
+    
+    if parlsy is not None:
+        retval += '<div class=\"separator\">|</div>'
+        for i in range(len(parlsy)):
+            retval += html_partition(parlsy[i])
+            if i != len(parlsy)-1:
+                retval += commasep
+
+    retval += '</div>'
+
+    return retval
+
+def html_rep(d):
+    """Takes a dictionary '[[xparls],[yparls]]':multiplicity and outputs
+    html code for displaying that representation.
+
+    :param d: dictionary of irreps and their multiplicities
+    :type d: dictionary
+    """
+    retval = ''
+    
+    keyls = list(d.keys())
+
+    for i in range(len(keyls)):
+        [parlsx,parlsy] = eval(keyls[i])
+        retval += html_parls(parlsx,parlsy=parlsy,mult=d[keyls[i]])
+        if i != len(keyls)-1:
+            retval += '<div class=\"separator\">&oplus;</div>'
+
+    return retval
+
+def compute_betti_tables(n):
+    Sn = Permutations(n) # type: ignore
+
+    for w in Sn:
+        pw = list(w)
+        if pw==[i+1 for i in range(n)]:
+            continue
+
+        X = eff_msv(pw)
+        [I,J] = Perm(pw).levi_datum()
+        B = X.equivariant_betti_html(I=I,J=J)
+
+        wstr = ''
+        for i in range(n):
+            wstr += str(pw[i])
+
+        with open('msv-betti-data/'+wstr+'.html','w') as f:
+            f.write(B)
