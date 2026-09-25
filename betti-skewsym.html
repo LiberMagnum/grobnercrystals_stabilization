@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Equivariant Betti Tables</title>
+
+	<meta charset="utf-8">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+	<link rel="stylesheet" type="text/css" href="css/betti.css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300" rel="stylesheet">
+
+	<script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js">
+    </script>
+</head>
+<body>
+	<header>
+          <h1 class="title_text_lrg">Equivariant Betti Tables</h1>
+		  <hr>
+
+		  <div class="navbar">
+			<a href=""></a>
+		  </div>
+	</header>
+
+    <div class="navbar">
+			<div class="navitem">
+				<a href="betti.html">Main</a>
+			</div>
+			<div class="navitem">
+				<a href="betti-msvs.html">MSVs</a>
+			</div>
+			<div class="navitem curnav">
+				<a href="betti-sym.html">Symmetric MSVs</a>
+			</div>
+	</div>
+
+	<article>
+		<div class="maintext">
+		<p>
+			Type a permutation in one-line notation into the box below and press the enter key to see the equivariant Betti table for the corresponding <b>skew-symmetric</b> matrix Schubert ideal.
+
+			This page is a placeholder. I have no data yet.
+		</p>
+		</div>
+
+		<div class="input">
+			<div class="textinput">
+				<input type="text" id="perm" name="perm" placeholder="e.g. 132">
+			</div>
+			<div class="buttons">
+				<div>
+					<button class="back" id="back" disabled="True">&blacktriangleleft;</button>
+				</div>
+				<div>
+					<button class="stabilize" type="button" id="stabilize" disabled="True">Stabilize!</button>
+				</div>
+				<div>
+					<button id="forward" class="forward" disabled="True">&blacktriangleright;</button>
+				</div>
+			</div>
+		</div>
+	</article>
+	
+	<div style="overflow: auto; width: 100%;" id="betti" class="betti"></div>
+</body>
+</html>
