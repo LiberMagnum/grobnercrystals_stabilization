@@ -618,10 +618,12 @@ def m2_graded_ring_str(m,n,varsC,to,omit_vars=[]):
         weightStr += cur_str
     weightStr = weightStr[:len(weightStr)-1] + '}'
 
+    heft = '{'+'1,'*m+'0,'*(n-1)+'0}'
+
     mStr = 'QQ['
     for i in range(len(varsC)-1):
         mStr += varsC[i]+','
-    mStr += varsC[-1] + ', Degrees=>'+weightStr+',MonomialOrder=>'+to+']'
+    mStr += varsC[-1] + ', Degrees=>'+weightStr+',MonomialOrder=>'+to+',Heft=>'+heft+']'
     return mStr
 
 '''
