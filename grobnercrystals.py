@@ -7,6 +7,7 @@ import itertools as it
 import copy
 from collections import defaultdict
 import functools
+import os
 
 # useful shorthands for Sage functions
 import sage.interfaces.macaulay2 as m2 # type: ignore
@@ -1009,7 +1010,7 @@ class PolRing():
 # Named BIdeal to avoid conflict with Sage objects
 # PR: instance of PolRing
 class BIdeal():
-    """Class for ideals of PolRing objects.
+    """Class for ideals of PolRing objects.f
 
     :param gens: generators of the ideal
     :type gens: polynomials in PR.R
@@ -1908,13 +1909,17 @@ def compute_betti_tables(n):
         if pw==[i+1 for i in range(n)]:
             continue
 
-        X = eff_msv(pw)
-        [I,J] = Perm(pw).levi_datum()
-        B = X.equivariant_betti_html(I=I,J=J)
-
         wstr = ''
         for i in range(n):
             wstr += str(pw[i])
+
+        path = 'msv-betti-data/'+wstr+'.html'
+        if os.path.exists(path):
+            continue
+
+        X = eff_msv(pw)
+        [I,J] = Perm(pw).levi_datum()
+        B = X.equivariant_betti_html(I=I,J=J)
 
         with open('msv-betti-data/'+wstr+'.html','w') as f:
             f.write(B)
