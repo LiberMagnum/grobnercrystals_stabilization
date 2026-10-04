@@ -600,14 +600,15 @@ def m2_ungraded_ring_str(varsC,to):
     mStr += varsC[-1] + ', MonomialOrder=>'+to+']'
     return mStr
 
-def m2_graded_ring_str(m,n,varsC,to):
+def m2_graded_ring_str(m,n,varsC,to,omit_vars=[]):
     weights = []
     for i in range(m):
         for j in range(n):
-            cur_weight = [0]*(m+n)
-            cur_weight[i] = 1
-            cur_weight[m+j] = 1
-            weights.append(cur_weight)
+            if (i+1,j+1) not in omit_vars:
+                cur_weight = [0]*(m+n)
+                cur_weight[i] = 1
+                cur_weight[m+j] = 1
+                weights.append(cur_weight)
     weightStr = '{'
     for weight in weights:
         cur_str = '{'
@@ -990,7 +991,7 @@ class PolRing():
         self.Y = self.yR.gens()
         self.XY = self.xyR.gens()
 
-        self.graded_m2_str = m2_graded_ring_str(m,n,self.vars,to)
+        self.graded_m2_str = m2_graded_ring_str(m,n,self.vars,to,omit_vars=omit_vars)
         self.ungraded_m2_str = m2_ungraded_ring_str(self.vars,to)
 
     def hilb_exp(self,deg):
@@ -1732,7 +1733,19 @@ def eff_msv(w):
     if type(w) is list:
         w = Perm(w)
 
-    R = PolRing(w.max_row+1,w.max_col+1)
+    ess_set = w.ess_set()
+    omit_vars =[]
+    for i in range(w.max_row+1):
+        for j in range(w.max_col+1):
+            in_reg = False
+            for box in ess_set:
+                if i <= box[0] and j <= box[1]:
+                    in_reg = True
+                    break
+            if not in_reg:
+                omit_vars.append((i+1,j+1))
+
+    R = PolRing(w.max_row+1,w.max_col+1,omit_vars=omit_vars)
 
     def fulton_generator_mats():
         essSet = w.filled_ess_set()
@@ -1750,16 +1763,6 @@ def eff_msv(w):
         return retVal
     
     gens = fulton_generators()
-    ess_set = w.ess_set()
-    for i in range(w.max_row+1):
-        for j in range(w.max_col+1):
-            in_reg = False
-            for box in ess_set:
-                if i <= box[0] and j <= box[1]:
-                    in_reg = True
-                    break
-            if not in_reg:
-                gens.append(R.Z[i,j])
 
     I = BIdeal(gens,R)
     return I
@@ -1912,10 +1915,6 @@ def compute_betti_tables(n):
         wstr = ''
         for i in range(n):
             wstr += str(pw[i])
-
-        path = 'msv-betti-data/'+wstr+'.html'
-        if os.path.exists(path):
-            continue
 
         X = eff_msv(pw)
         [I,J] = Perm(pw).levi_datum()
