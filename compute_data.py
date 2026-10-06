@@ -5,7 +5,7 @@ import pickle
 import os
 
 if __name__ == '__main__':
-    n = 5
+    n = 6
     Sn = list(Permutations(n))
     batch_num = int(os.getenv("SLURM_ARRAY_TASK_ID"))
     Sn_chunks = list(it.batched(Sn,10))

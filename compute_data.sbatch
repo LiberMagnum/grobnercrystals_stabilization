@@ -1,6 +1,6 @@
 #!/bin/tcsh
 #SBATCH --job-name=pickle_betti
-#SBATCH --array=0-11
+#SBATCH --array=0-71
 #SBATCH -n 12
 #SBATCH --time=225:00:00
 #SBATCH --mail-type=FAIL
