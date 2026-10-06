@@ -1541,8 +1541,11 @@ class BIdeal():
 
         return newB
 
-    def equivariant_betti_html(self,I=[],J=[],maxlen=None):
-        B = self.equivariant_betti(I=I,J=J,maxlen=maxlen)
+    def equivariant_betti_html(self,I=[],J=[],maxlen=None,betti=None):
+        if betti is not None:
+            B = betti
+        else:
+            B = self.equivariant_betti(I=I,J=J,maxlen=maxlen)
 
         maxrow = max([i for (i,j) in B.keys()])
         maxcol = max([j for (i,j) in B.keys()])
