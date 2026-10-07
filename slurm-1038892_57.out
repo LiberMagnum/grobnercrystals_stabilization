@@ -1,0 +1,12 @@
+/data/keeling/a/price29/grobnercrystals_stabilization/grobnercrystals.py:1505: DeprecationWarning: to_sage is deprecated. Please use sage instead.
+See https://github.com/sagemath/sage/issues/27848 for details.
+  numpairs = int(m2.macaulay2("#k").to_sage())
+/data/keeling/a/price29/grobnercrystals_stabilization/grobnercrystals.py:1509: DeprecationWarning: to_sage is deprecated. Please use sage instead.
+See https://github.com/sagemath/sage/issues/27848 for details.
+  (row,col) = (int(m2.macaulay2("(k#"+str(i)+")#2").to_sage()),int(m2.macaulay2("(k#"+str(i)+")#0").to_sage()))
+/data/keeling/a/price29/grobnercrystals_stabilization/grobnercrystals.py:1513: DeprecationWarning: to_sage is deprecated. Please use sage instead.
+See https://github.com/sagemath/sage/issues/27848 for details.
+  exp_tuple = m2.macaulay2("k#"+str(i)+"#1").to_sage()
+/data/keeling/a/price29/grobnercrystals_stabilization/grobnercrystals.py:1518: DeprecationWarning: to_sage is deprecated. Please use sage instead.
+See https://github.com/sagemath/sage/issues/27848 for details.
+  coeff = m2.macaulay2("B#(k#"+str(i)+")").to_sage()
