@@ -8,6 +8,7 @@ import copy
 from collections import defaultdict
 import functools
 import os
+import pickle
 
 # useful shorthands for Sage functions
 import sage.interfaces.macaulay2 as m2 # type: ignore
@@ -1927,3 +1928,80 @@ def compute_betti_tables(n):
 
         with open('msv-betti-data/'+wstr+'.html','w') as f:
             f.write(B)
+
+# computes the nth stabilization of perm
+def stabilize(perm,n):  
+    prepend = [i+1 for i in range(n)]
+    newperm = prepend + [elt+n for elt in perm]
+    return newperm
+
+def file_name(perm):
+    permls = ''
+    for i in perm:
+        permls += str(i)
+    return permls
+
+def get_columns(betti):
+    max_col = max([j for (i,j) in betti.keys()])
+    cols = {}
+    for j in range(max_col+1):
+        col_keys = []
+        for (r,c) in betti.keys():
+            if c==j:
+                col_keys.append((r,c))
+        cols[j] = col_keys
+    return cols
+
+def total_in_column(col,d):
+    total_irreps = 0
+    for k in col:
+        for repls in d[k].keys():
+            total_irreps += d[k][repls]
+    return total_irreps
+
+def column_totals(B):
+    cols = get_columns(B)
+    totals = [total_in_column(cols[i],B) for i in cols.keys()]
+    return totals
+
+def stabilization_checks():
+    ret_d = {}
+    for n in range(2,6):
+        Sn = list(Permutations(n))
+        for w1 in Sn:
+            w = list(w1)
+            if w[0] != 1:
+                betti_ls = []
+                # load betti tables
+                for i in range(n,8):
+                    stab_w = stabilize(w,i)
+                    with open(file_name(stab_w)+'.pickle','rb') as f:
+                        betti = pickle.load(f)
+                    betti_ls.append(betti)
+                
+                stab_threshold = None
+                strong_stab_threshold = None
+                col1_stab_threshold = None
+                col1_strong_stab_threshold = None
+                oscillates = False
+
+                for i in range(1,8-n):
+                    previous_betti = betti_ls[i-1]
+                    cur_betti = betti_ls[i]
+
+                    previous_betti_cols = get_columns(previous_betti)
+                    cur_betti_cols = get_columns(cur_betti)
+
+                    previous_betti_col_totals = column_totals(previous_betti)
+                    cur_betti_col_totals = column_totals(cur_betti)
+
+                    if col1_stab_threshold is None and previous_betti_col_totals[1]==cur_betti_col_totals[1]:
+                        col1_stab_threshold = i-1
+
+                    if stab_threshold is None and previous_betti_col_totals==cur_betti_col_totals:
+                        stab_threshold = i-1
+
+                    if not oscillates and not all([cur_betti_col_totals[i]>=previous_betti_col_totals[i] for i in range(len(cur_betti_col_totals))]):
+                        oscillates = True
+                    pass
+                pass
