@@ -9,6 +9,7 @@ from collections import defaultdict
 import functools
 import os
 import pickle
+import json
 
 # useful shorthands for Sage functions
 import sage.interfaces.macaulay2 as m2 # type: ignore
@@ -2025,7 +2026,7 @@ def strong_stabilization(col1,col2,B1,B2):
 
 def stabilization_checks():
     ret_d = {}
-    for n in range(2,4):
+    for n in range(2,6):
         Sn = list(Permutations(n))
         for w1 in Sn:
             w = list(w1)
@@ -2105,7 +2106,4 @@ def stabilization_checks():
             
             ret_d[file_name(w)] = {'weak-stability-threshold':stab_threshold,'column-weak-stability-thresholds':cols_stab_threshold, 'strong-stability-threshold':strong_stab_threshold,'column-strong-stability-thresholds':cols_strong_stab_threshold,'oscillates':oscillates,'destabilizes':destabilizes,'max-Sn-table-computed':7}
     
-    print(ret_d)
     return ret_d
-    #with open('raw-msv-betti-data/stabilization_data.pickle','wb') as f:
-    #    pickle.dump(ret_d)

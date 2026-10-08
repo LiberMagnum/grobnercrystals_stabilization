@@ -86,11 +86,12 @@ $(document).ready(function() {
         var backstability = w.length;
         for (let i=w.length;i>=1;i--){
             if (i==w.at(i-1)){
-                backstability = i;
+                backstability = i-1;
             } else {
                 break;
             }
         };
+        console.log(backstability)
         newW = w.slice(stability+1,backstability);
         stableW = '';
         stabilized = stability+1;
@@ -98,6 +99,7 @@ $(document).ready(function() {
         for (let i=0;i<newW.length;i++){
             stableW+=`${parseInt(newW.at(i))-(stability+1)}`;
         };
+        console.log(stableW)
     };
 
     function updateCSS() {
