@@ -59,7 +59,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1
         ],
@@ -114,7 +114,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1
         ],
@@ -134,7 +134,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1
@@ -154,7 +154,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1
         ],
@@ -174,8 +174,8 @@ data = {
         "strong-stability-threshold": 2,
         "column-strong-stability-thresholds": [
             0,
+            2,
             1,
-            0,
             2,
             1
         ],
@@ -217,7 +217,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -258,7 +258,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1
@@ -279,8 +279,8 @@ data = {
         "strong-stability-threshold": 2,
         "column-strong-stability-thresholds": [
             0,
+            2,
             1,
-            0,
             2,
             1
         ],
@@ -301,7 +301,7 @@ data = {
         "strong-stability-threshold": 2,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            2,
             1,
             2,
             2,
@@ -324,7 +324,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -348,7 +348,7 @@ data = {
         "strong-stability-threshold": 2,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            2,
             1,
             2,
             2,
@@ -387,7 +387,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             null,
             1
         ],
@@ -406,7 +406,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             null,
             1
         ],
@@ -426,7 +426,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             null,
             1,
             null
@@ -487,7 +487,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1
@@ -509,7 +509,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1,
@@ -531,7 +531,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1
@@ -553,8 +553,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
+            null,
             1,
-            0,
             null,
             1,
             1
@@ -576,7 +576,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -600,7 +600,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -623,8 +623,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
+            null,
             1,
-            0,
             null,
             1
         ],
@@ -645,7 +645,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             1,
@@ -668,8 +668,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
+            null,
             1,
-            0,
             null,
             null,
             1
@@ -692,7 +692,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -717,7 +717,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -743,7 +743,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -786,8 +786,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
+            null,
             1,
-            0,
             null,
             1
         ],
@@ -807,7 +807,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1
@@ -829,7 +829,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             1,
@@ -851,7 +851,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             null,
             1,
             null
@@ -874,7 +874,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             1
@@ -896,7 +896,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             1,
@@ -944,7 +944,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1,
@@ -968,7 +968,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1019,7 +1019,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -1044,7 +1044,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1,
@@ -1068,7 +1068,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1,
@@ -1093,7 +1093,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1119,7 +1119,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1146,7 +1146,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -1174,7 +1174,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1199,7 +1199,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1
@@ -1221,8 +1221,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
+            null,
             1,
-            0,
             null,
             null,
             1
@@ -1244,7 +1244,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -1268,8 +1268,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
             null,
+            1,
             null,
             null,
             1,
@@ -1292,7 +1292,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             1,
@@ -1317,7 +1317,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             null,
@@ -1341,7 +1341,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1368,7 +1368,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             null,
@@ -1393,7 +1393,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1420,7 +1420,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             null,
@@ -1446,7 +1446,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             null,
@@ -1527,7 +1527,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -1554,7 +1554,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             null,
@@ -1582,7 +1582,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             null,
@@ -1611,7 +1611,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -1641,7 +1641,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             null,
@@ -1689,7 +1689,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             0,
             1,
             1,
@@ -1712,8 +1712,8 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
+            null,
             1,
-            0,
             null,
             1,
             1
@@ -1736,7 +1736,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1761,7 +1761,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -1787,7 +1787,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1813,7 +1813,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             1
@@ -1862,7 +1862,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             null,
@@ -1943,7 +1943,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             null,
@@ -1969,7 +1969,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -1995,7 +1995,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -2023,7 +2023,7 @@ data = {
         "column-strong-stability-thresholds": [
             0,
             null,
-            1,
+            null,
             null,
             null,
             null,
@@ -2079,7 +2079,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             null,
@@ -2138,7 +2138,7 @@ data = {
         "strong-stability-threshold": 1,
         "column-strong-stability-thresholds": [
             0,
-            0,
+            1,
             1,
             1,
             1,
@@ -2166,7 +2166,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             1,
             null,
             null,
@@ -2256,7 +2256,7 @@ data = {
         "strong-stability-threshold": null,
         "column-strong-stability-thresholds": [
             0,
-            1,
+            null,
             null,
             null,
             null,

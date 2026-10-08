@@ -1984,7 +1984,7 @@ def column_mults(col,B):
 # checks if par2 is the stabilization of par1
 def is_stabilization(par1,par2):
     durfee1 = Partition(par1).frobenius_rank()
-    if durfee1==0:
+    if durfee1==0 and Partition(par2).frobenius_rank()==0:
         return True
     par1mod = list(Partition(par1))
     par2mod = list(Partition(par2))
@@ -2018,7 +2018,7 @@ def strong_stabilization(col1,col2,B1,B2):
             if j not in used_comparisons:
                 irrep1 = clean_parls(col1irreps[i])
                 irrep2 = clean_parls(col2irreps[j])
-                same_mult = (col1mults[i]==col2mults[i])
+                same_mult = (col1mults[i]==col2mults[j])
                 same_tail = (irrep1[0][1:]==irrep2[0][1:] and irrep1[1][1:]==irrep2[1][1:])
                 stable_head = (is_stabilization(irrep1[0][0],irrep2[0][0]) and is_stabilization(irrep1[1][0],irrep2[1][0]))
                 if same_mult and same_tail and stable_head:
