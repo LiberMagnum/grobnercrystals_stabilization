@@ -105,7 +105,9 @@ $(document).ready(function() {
             strongCols = data[stableW]["column-strong-stability-thresholds"];
             for (let i=0;i<weakCols.length;i++){
                 elt = "table tr:not(:first-child) td:nth-child("+`${i+2}`+")";
-                if (stabilized>=strongCols.at(i)){
+                if (weakCols.at(i)==null){
+                    $(elt).css("background",nodata);
+                } else if (stabilized>=strongCols.at(i) && strongCols.at(i)!=null){
                     $(elt).css("background",solid);
                 } else if (stabilized>=weakCols.at(i)){
                     $(elt).css("background",stripes);

@@ -1994,32 +1994,39 @@ def is_stabilization(par1,par2):
         return True
     return False
 
+def clean_parls(parls):
+    [parlsx,parlsy] = parls
+    newparls = [[],[]]
+    newparls[0] = [[i for i in par if i!=0] for par in parlsx]
+    newparls[1] = [[j for j in par if j!=0] for par in parlsy]
+    return newparls
+
 # checks if column 2 is a strong stabilization of column 1
 def strong_stabilization(col1,col2,B1,B2):
     col1irreps = column_irreps(col1,B1)
     col1mults = column_mults(col1,B1)
     col2irreps = column_irreps(col2,B2)
     col2mults = column_mults(col2,B2)
-    first_irreps1 = [[col1irreps[i][0][0],col1irreps[i][1][0]] for i in range(len(col1irreps))]
-    first_irreps2 = [[col2irreps[i][0][0],col2irreps[i][1][0]] for i in range(len(col2irreps))]
 
-    if len(first_irreps1) != len(first_irreps2):
+    if sum(col1mults) != sum(col2mults) or len(col1irreps) != len(col2irreps):
         return False
 
     stable_pairs = []
-    for i in range(len(first_irreps2)):
-        for j in range(len(first_irreps1)):
-            if is_stabilization(first_irreps1[j][0],first_irreps2[i][0]) and is_stabilization(first_irreps1[j][1],first_irreps2[i][1]):
-                stable_pairs.append((i,j))
-    
-    for i in range(len(first_irreps1)):
-        # check that every irrep is actually a stabilization of precisely one other irrep
-        if len([(r,c) for (r,c) in stable_pairs if r==i]) != 1 or len([(r,c) for (r,c) in stable_pairs if c==i]) != 1:
-            return False
+    used_comparisons = []
+    for i in range(len(col1irreps)):
+        for j in range(len(col2irreps)):
+            if j not in used_comparisons:
+                irrep1 = clean_parls(col1irreps[i])
+                irrep2 = clean_parls(col2irreps[j])
+                same_mult = (col1mults[i]==col2mults[i])
+                same_tail = (irrep1[0][1:]==irrep2[0][1:] and irrep1[1][1:]==irrep2[1][1:])
+                stable_head = (is_stabilization(irrep1[0][0],irrep2[0][0]) and is_stabilization(irrep1[1][0],irrep2[1][0]))
+                if same_mult and same_tail and stable_head:
+                    used_comparisons.append(j)
+                    stable_pairs.append((i,j))
 
-    for (i,j) in stable_pairs:
-        # check that multiplicity of irrep and its stabilization is actually the same
-        if col1mults[i] != col2mults[j]:
+    for i in range(len(col1irreps)):
+        if len([(r,c) for (r,c) in stable_pairs if r==i]) != 1 or len([(r,c) for (r,c) in stable_pairs if c==i]) != 1:
             return False
 
     return True
@@ -2042,7 +2049,6 @@ def stabilization_checks():
                 with open('raw-msv-betti-data/'+file_name(stab_w)+'.pickle','rb') as f:
                     betti = pickle.load(f)
                 betti_ls.append(betti)
-            
             numcols = max([j for (i,j) in betti_ls[0].keys()])
             
             cols_stab_threshold = [None]*(numcols+1)
