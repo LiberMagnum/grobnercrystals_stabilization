@@ -1964,44 +1964,148 @@ def column_totals(B):
     totals = [total_in_column(cols[i],B) for i in cols.keys()]
     return totals
 
+def column_irreps(col,B):
+    col_irreps = []
+    for k in col:
+        d = B[k]
+        for parls in d.keys():
+            col_irreps.append(eval(parls))
+    return col_irreps
+
+def column_mults(col,B):
+    col_mults = []
+    for k in col:
+        d = B[k]
+        for parls in d.keys():
+            col_mults.append(d[parls])
+    return col_mults
+
+# checks if par2 is the stabilization of par1
+def is_stabilization(par1,par2):
+    durfee1 = Partition(par1).frobenius_rank()
+    if durfee1==0:
+        return True
+    par1mod = list(Partition(par1))
+    par2mod = list(Partition(par2))
+    par1stab = par1mod + [durfee1]
+    par1stab.sort(reverse=True)
+    if par2mod==par1stab:
+        return True
+    return False
+
+# checks if column 2 is a strong stabilization of column 1
+def strong_stabilization(col1,col2,B1,B2):
+    col1irreps = column_irreps(col1,B1)
+    col1mults = column_mults(col1,B1)
+    col2irreps = column_irreps(col2,B2)
+    col2mults = column_mults(col2,B2)
+    first_irreps1 = [[col1irreps[i][0][0],col1irreps[i][1][0]] for i in range(len(col1irreps))]
+    first_irreps2 = [[col2irreps[i][0][0],col2irreps[i][1][0]] for i in range(len(col2irreps))]
+
+    if len(first_irreps1) != len(first_irreps2):
+        return False
+
+    stable_pairs = []
+    for i in range(len(first_irreps2)):
+        for j in range(len(first_irreps1)):
+            if is_stabilization(first_irreps1[j][0],first_irreps2[i][0]) and is_stabilization(first_irreps1[j][1],first_irreps2[i][1]):
+                stable_pairs.append((i,j))
+    
+    for i in range(len(first_irreps1)):
+        # check that every irrep is actually a stabilization of precisely one other irrep
+        if len([(r,c) for (r,c) in stable_pairs if r==i]) != 1 or len([(r,c) for (r,c) in stable_pairs if c==i]) != 1:
+            return False
+
+    for (i,j) in stable_pairs:
+        # check that multiplicity of irrep and its stabilization is actually the same
+        if col1mults[i] != col2mults[j]:
+            return False
+
+    return True
+
 def stabilization_checks():
     ret_d = {}
-    for n in range(2,6):
+    for n in range(2,4):
         Sn = list(Permutations(n))
         for w1 in Sn:
             w = list(w1)
-            if w[0] != 1:
-                betti_ls = []
-                # load betti tables
-                for i in range(n,8):
-                    stab_w = stabilize(w,i)
-                    with open(file_name(stab_w)+'.pickle','rb') as f:
-                        betti = pickle.load(f)
-                    betti_ls.append(betti)
-                
-                stab_threshold = None
-                strong_stab_threshold = None
-                col1_stab_threshold = None
-                col1_strong_stab_threshold = None
-                oscillates = False
 
-                for i in range(1,8-n):
-                    previous_betti = betti_ls[i-1]
-                    cur_betti = betti_ls[i]
+            # ignore things that are stabilizations or back-stabilizations
+            if w[0] == 1 or w[-1]==n:
+                continue
 
-                    previous_betti_cols = get_columns(previous_betti)
-                    cur_betti_cols = get_columns(cur_betti)
+            betti_ls = []
+            # load betti tables
+            for i in range(8-n):
+                stab_w = stabilize(w,i)
+                with open('raw-msv-betti-data/'+file_name(stab_w)+'.pickle','rb') as f:
+                    betti = pickle.load(f)
+                betti_ls.append(betti)
+            
+            numcols = max([j for (i,j) in betti_ls[0].keys()])
+            
+            cols_stab_threshold = [None]*(numcols+1)
+            cols_strong_stab_threshold = [None]*(numcols+1)
+            stab_threshold = None
+            strong_stab_threshold = None
+            oscillates = False
+            destabilizes = False # check that all of the checked properties remain consistent as you stabilize further
 
-                    previous_betti_col_totals = column_totals(previous_betti)
-                    cur_betti_col_totals = column_totals(cur_betti)
+            for i in range(1,8-n):
+                previous_betti = betti_ls[i-1]
+                cur_betti = betti_ls[i]
 
-                    if col1_stab_threshold is None and previous_betti_col_totals[1]==cur_betti_col_totals[1]:
-                        col1_stab_threshold = i-1
+                # compute columns and column totals
+                previous_betti_cols = get_columns(previous_betti)
+                cur_betti_cols = get_columns(cur_betti)
 
-                    if stab_threshold is None and previous_betti_col_totals==cur_betti_col_totals:
-                        stab_threshold = i-1
+                previous_betti_col_totals = column_totals(previous_betti)
+                cur_betti_col_totals = column_totals(cur_betti)
 
-                    if not oscillates and not all([cur_betti_col_totals[i]>=previous_betti_col_totals[i] for i in range(len(cur_betti_col_totals))]):
-                        oscillates = True
-                    pass
-                pass
+                # booleans
+                cols_totals_equal = [previous_betti_col_totals[l]==cur_betti_col_totals[l] for l in range(len(previous_betti_col_totals))]
+                all_col_totals_equal = all(cols_totals_equal)
+                cols_strong_stabilize = [strong_stabilization(previous_betti_cols[l],cur_betti_cols[l],previous_betti,cur_betti) for l in cur_betti_cols.keys()]
+                all_col_strong_stabilize = all(cols_strong_stabilize)
+
+                # Check that doesn't destabilize, if currently stabilized
+                for l in range(numcols+1):
+                    if cols_stab_threshold[l] is not None and not cols_totals_equal[l]:
+                        cols_stab_threshold[l] = [cols_stab_threshold[l],'destabilizes at '+str(i-1)]
+                        destabilizes = True
+
+                    if cols_strong_stab_threshold[l] is not None and not cols_strong_stabilize[l]:
+                        cols_strong_stab_threshold[l] = [cols_strong_stab_threshold[l],'destabilizes at '+str(i-1)]
+                        destabilizes = True
+
+                if stab_threshold is not None and not all_col_totals_equal:
+                    stab_threshold = [stab_threshold,'destabilizes at '+str(i-1)]
+                    destabilizes = True
+
+                if strong_stab_threshold is not None and not all_col_strong_stabilize:
+                    strong_stab_threshold = [strong_stab_threshold,'destabilizes at '+str(i-1)]
+                    destabilizes = True
+
+                # Check stabilization conditions
+                for l in range(numcols+1):
+                    if cols_stab_threshold[l] is None and cols_totals_equal[l]:
+                        cols_stab_threshold[l] = i-1
+
+                    if cols_strong_stab_threshold[l] is None and cols_strong_stabilize[l]:
+                        cols_strong_stab_threshold[l] = i-1
+
+                if stab_threshold is None and all_col_totals_equal:
+                    stab_threshold = i-1
+
+                if oscillates==False and not all([cur_betti_col_totals[i]>=previous_betti_col_totals[i] for i in range(len(cur_betti_col_totals))]):
+                    oscillates = [True,str(i)+'-stabilization has fewer terms than '+str(i-1)+'-stabilization']
+
+                if strong_stab_threshold is None and all_col_strong_stabilize:
+                    strong_stab_threshold = i-1
+            
+            ret_d[file_name(w)] = {'weak-stability-threshold':stab_threshold,'column-weak-stability-thresholds':cols_stab_threshold, 'strong-stability-threshold':strong_stab_threshold,'column-strong-stability-thresholds':cols_strong_stab_threshold,'oscillates':oscillates,'destabilizes':destabilizes,'max-Sn-table-computed':7}
+    
+    print(ret_d)
+    return ret_d
+    #with open('raw-msv-betti-data/stabilization_data.pickle','wb') as f:
+    #    pickle.dump(ret_d)
