@@ -2112,6 +2112,6 @@ def stabilization_checks():
                 if strong_stab_threshold is None and all_col_strong_stabilize:
                     strong_stab_threshold = i-1
             
-            ret_d[file_name(w)] = {'weak-stability-threshold':stab_threshold,'column-weak-stability-thresholds':cols_stab_threshold, 'strong-stability-threshold':strong_stab_threshold,'column-strong-stability-thresholds':cols_strong_stab_threshold,'oscillates':oscillates,'destabilizes':destabilizes,'max-Sn-table-computed':7}
+            ret_d[file_name(w)] = {'weak-stability-threshold':stab_threshold,'column-weak-stability-thresholds':cols_stab_threshold, 'strong-stability-threshold':strong_stab_threshold,'column-strong-stability-thresholds':cols_strong_stab_threshold,'oscillates':oscillates,'destabilizes':destabilizes,'max-Sn-table-computed':len(w)-1+len(betti_ls)}
     
     return ret_d
