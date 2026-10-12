@@ -65,7 +65,6 @@ $(document).ready(function() {
                 updateCSS();
             });
         }).fail(function() {
-            console.log("Failed")
             $('#betti-container').html(
                 '<p>Data not found</p>'
             );
@@ -86,7 +85,7 @@ $(document).ready(function() {
         var backstability = w.length;
         for (let i=w.length;i>=1;i--){
             if (i==w.at(i-1)){
-                backstability = i;
+                backstability = i-1;
             } else {
                 break;
             }
@@ -106,15 +105,13 @@ $(document).ready(function() {
             strongCols = data[stableW]["column-strong-stability-thresholds"];
             for (let i=0;i<weakCols.length;i++){
                 elt = "table tr:not(:first-child) td:nth-child("+`${i+2}`+")";
-                console.log(elt);
-                if (stabilized>=strongCols.at(i)){
-                    console.log(`${i}`+" column strongly stabilized");
+                if (weakCols.at(i)==null){
+                    $(elt).css("background",nodata);
+                } else if (stabilized>=strongCols.at(i) && strongCols.at(i)!=null){
                     $(elt).css("background",solid);
                 } else if (stabilized>=weakCols.at(i)){
-                    console.log(`${i}`+" column weakly stabilized");
                     $(elt).css("background",stripes);
                 } else {
-                    console.log(`${i}`+" column not stabilized");
                     $(elt).css("background",noback);
                 };
             };
