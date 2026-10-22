@@ -2033,7 +2033,7 @@ def strong_stabilization(col1,col2,B1,B2):
 
 def stabilization_checks():
     ret_d = {}
-    for n in range(2,6):
+    for n in range(2,7):
         Sn = list(Permutations(n))
         for w1 in Sn:
             w = list(w1)
@@ -2044,11 +2044,13 @@ def stabilization_checks():
 
             betti_ls = []
             # load betti tables
-            for i in range(8-n):
+            for i in range(9-n):
                 stab_w = stabilize(w,i)
-                with open('raw-msv-betti-data/'+file_name(stab_w)+'.pickle','rb') as f:
-                    betti = pickle.load(f)
-                betti_ls.append(betti)
+                path = 'raw-msv-betti-data/'+file_name(stab_w)+'.pickle'
+                if os.path.exists(path):
+                    with open(path,'rb') as f:
+                        betti = pickle.load(f)
+                    betti_ls.append(betti)
             numcols = max([j for (i,j) in betti_ls[0].keys()])
             
             cols_stab_threshold = [None]*(numcols+1)
@@ -2058,7 +2060,7 @@ def stabilization_checks():
             oscillates = False
             destabilizes = False # check that all of the checked properties remain consistent as you stabilize further
 
-            for i in range(1,8-n):
+            for i in range(1,len(betti_ls)):
                 previous_betti = betti_ls[i-1]
                 cur_betti = betti_ls[i]
 
@@ -2110,6 +2112,6 @@ def stabilization_checks():
                 if strong_stab_threshold is None and all_col_strong_stabilize:
                     strong_stab_threshold = i-1
             
-            ret_d[file_name(w)] = {'weak-stability-threshold':stab_threshold,'column-weak-stability-thresholds':cols_stab_threshold, 'strong-stability-threshold':strong_stab_threshold,'column-strong-stability-thresholds':cols_strong_stab_threshold,'oscillates':oscillates,'destabilizes':destabilizes,'max-Sn-table-computed':7}
+            ret_d[file_name(w)] = {'weak-stability-threshold':stab_threshold,'column-weak-stability-thresholds':cols_stab_threshold, 'strong-stability-threshold':strong_stab_threshold,'column-strong-stability-thresholds':cols_strong_stab_threshold,'oscillates':oscillates,'destabilizes':destabilizes,'max-Sn-table-computed':len(w)-1+len(betti_ls)}
     
     return ret_d
